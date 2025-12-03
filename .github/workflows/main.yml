@@ -1,0 +1,22 @@
+name: Auto Commit JSON
+on:
+  schedule:
+    - cron: "*/5 * * * *"  # runs every 5 minutes
+
+jobs:
+  commit-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch and update JSON
+        run: |
+          curl -LOR https://database.gformsnap.xyz/read?token=qazwsxedcrfv
+          # Add any processing or validation steps here if needed
+
+      - name: Commit and Push
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Automated update of data.json"
+          file_pattern: "data.json"
