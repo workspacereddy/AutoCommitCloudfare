@@ -1,0 +1,25 @@
+{
+  "class": {
+    "Class": "RPA"
+  },
+  "hyd": {
+    "city": "Hydreabad",
+    "name": "Work"
+  },
+  "india": {
+    "name": "Reddy",
+    "age": 20
+  },
+  "user1": {
+    "name": "Work",
+    "Age": 21
+  },
+  "user2": {
+    "name": "Reddy",
+    "age": 20
+  },
+  "user3": {
+    "name": "Work",
+    "Age": 21
+  }
+}
