@@ -1,19 +1,19 @@
-name: Fetch JSON and Auto Commit
+name: Auto Fetch JSON and Commit
 
 on:
   schedule:
-    - cron: "*/2 * * * *"      # every 2 minutes
-  workflow_dispatch:           # manual run allowed
+    - cron: "*/2 * * * *"   # every 7 minutes
+  workflow_dispatch:        # manual trigger
 
 jobs:
-  fetch-and-commit:
+  auto-fetch:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0        # IMPORTANT: allows pushing
+          fetch-depth: 0  # enables pushing
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -26,11 +26,11 @@ jobs:
       - name: Run fetch script
         run: python fetch.py
 
-      - name: Commit and push if changed
+      - name: Force commit always
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add data.json fetch_log.txt
-          git commit -m "Auto update: $(date -u)" || echo "No changes to commit"
+          git add .
+          git commit -m "Auto update $(date -u)" --allow-empty
           git push
