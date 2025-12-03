@@ -1,22 +1,36 @@
-name: Auto Commit JSON
+name: Fetch JSON and Auto Commit
 
 on:
   schedule:
-    - cron: "*/2 * * * *"  # Every 5 mins
+    - cron: "*/2 * * * *"      # every 2 minutes
+  workflow_dispatch:           # manual run allowed
 
 jobs:
-  commit-json:
+  fetch-and-commit:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Fetch and update JSON
-        run: |
-          curl -s https://database.gformsnap.xyz/read?token=qazwsxedcrfv -o data.json
-
-      - name: Commit and Push
-        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Automated update data.json"
-          file_pattern: data.json
+          fetch-depth: 0        # IMPORTANT: allows pushing
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run fetch script
+        run: python fetch.py
+
+      - name: Commit and push if changed
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add data.json fetch_log.txt
+          git commit -m "Auto update: $(date -u)" || echo "No changes to commit"
+          git push
